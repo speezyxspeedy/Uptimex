@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UptimeX — Website Uptime & Performance Monitor</title>
+  <meta name="description" content="Professional, production-grade website uptime and latency monitor with SSRF security and real-time analytics.">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">Uptime<span class="brand-accent">X</span></span>
+            <span class="brand-subtitle">Observability</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main Navigation">
+        <button class="nav-item active" data-view="overview" id="nav-overview">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span>Overview</span>
+        </button>
+
+        <button class="nav-item" data-view="monitors" id="nav-monitors">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <span>Monitors</span>
+          <span class="badge" id="nav-monitors-count">0</span>
+        </button>
+
+        <button class="nav-item" data-view="incidents" id="nav-incidents">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span>Incidents</span>
+          <span class="badge badge-alert" id="nav-incidents-count" style="display:none;">0</span>
+        </button>
+
+        <button class="nav-item" data-view="history" id="nav-history">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3v18h18"></path>
+            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path>
+          </svg>
+          <span>History &amp; Charts</span>
+        </button>
+
+        <button class="nav-item" data-view="settings" id="nav-settings">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="connection-status" id="backend-status-card">
+          <span class="status-dot connected" id="connection-dot"></span>
+          <span class="connection-text" id="connection-text">Backend Online</span>
+        </div>
+        <div class="scheduler-pill" id="scheduler-status-pill">
+          <span class="pill-dot"></span>
+          <span>Scheduler Active</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Navigation Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="view-header">
+            <h1 class="view-title" id="page-title">System Overview</h1>
+            <p class="view-subtitle" id="page-subtitle">Real-time infrastructure health and performance metrics</p>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <!-- Live refresh countdown -->
+          <div class="refresh-indicator" id="refresh-indicator" title="Auto-refreshes every 15s">
+            <svg class="spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            </svg>
+            <span id="countdown-text">15s</span>
+          </div>
+
+          <!-- Theme Toggle -->
+          <button class="btn-icon" id="theme-toggle" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
+            <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+
+          <!-- Refresh Data Button -->
+          <button class="btn btn-secondary btn-sm" id="btn-refresh-data" title="Refresh metrics">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            </svg>
+            <span>Refresh</span>
+          </button>
+
+          <!-- Add Monitor CTA -->
+          <button class="btn btn-primary btn-sm" id="btn-open-create-modal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Add Monitor</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- VIEW 1: OVERVIEW -->
+      <section class="view-panel active" id="view-overview">
+        <!-- Active Incidents Alert Banner (conditionally displayed) -->
+        <div class="alert-banner" id="active-incidents-banner" style="display:none;">
+          <div class="alert-banner-content">
+            <div class="alert-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <div class="alert-text">
+              <strong id="active-incidents-summary">Active Outage Detected!</strong>
+              <span id="active-incidents-detail">One or more monitored endpoints are currently failing health checks.</span>
+            </div>
+          </div>
+          <button class="btn btn-danger btn-sm" id="btn-banner-view-incidents">View Incidents</button>
+        </div>
+
+        <!-- Metric Summary Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card" id="card-total-monitors">
+            <div class="metric-header">
+              <span class="metric-label">Total Monitors</span>
+              <div class="metric-icon-wrap icon-blue">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+              </div>
+            </div>
+            <div class="metric-value" id="summary-total">0</div>
+            <div class="metric-footer">
+              <span class="subtext" id="summary-status-split">0 active · 0 paused</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-up-monitors">
+            <div class="metric-header">
+              <span class="metric-label">Operational (Up)</span>
+              <div class="metric-icon-wrap icon-emerald">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+            </div>
+            <div class="metric-value text-emerald" id="summary-up">0</div>
+            <div class="metric-footer">
+              <span class="badge badge-emerald" id="summary-up-pct">100% operational</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-down-monitors">
+            <div class="metric-header">
+              <span class="metric-label">Outages (Down)</span>
+              <div class="metric-icon-wrap icon-rose">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+            </div>
+            <div class="metric-value text-rose" id="summary-down">0</div>
+            <div class="metric-footer">
+              <span class="subtext" id="summary-down-sub">No failing endpoints</span>
+            </div>
+          </div>
+
+          <div class="metric-card" id="card-avg-latency">
+            <div class="metric-header">
+              <span class="metric-label">Avg Response Time</span>
+              <div class="metric-icon-wrap icon-violet">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+            </div>
+            <div class="metric-value" id="summary-avg-latency">-- <span class="unit">ms</span></div>
+            <div class="metric-footer">
+              <span class="subtext" id="summary-uptime-24h">24h Uptime: --</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Status Overview Section -->
+        <div class="content-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Live Endpoint Status</h2>
+              <p class="card-subtitle">Real-time health and response latency of all configured monitors</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="btn-quick-manage">Manage All</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="table-overview-monitors">
+              <thead>
+                <tr>
+                  <th>Monitor</th>
+                  <th>Status</th>
+                  <th>Latest Latency</th>
+                  <th>HTTP Code</th>
+                  <th>Last Check</th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="overview-monitors-tbody">
+                <!-- Dynamically injected -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Recent Activity & Incidents -->
+        <div class="grid-two-col">
+          <div class="content-card">
+            <div class="card-header">
+              <h2 class="card-title">Recent Checks Stream</h2>
+              <span class="badge" id="recent-checks-count">Last 10</span>
+            </div>
+            <div class="recent-checks-list" id="overview-recent-checks">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <div class="content-card">
+            <div class="card-header">
+              <h2 class="card-title">Incident Feed</h2>
+              <button class="btn-link" id="btn-link-all-incidents">View All</button>
+            </div>
+            <div class="incident-feed-list" id="overview-incident-feed">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: MONITORS -->
+      <section class="view-panel" id="view-monitors">
+        <!-- Controls Bar -->
+        <div class="filter-bar">
+          <div class="search-input-wrap">
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="filter-search" class="form-input" placeholder="Search monitors by name or URL...">
+          </div>
+
+          <div class="filter-group">
+            <div class="tab-pills" id="filter-status-pills">
+              <button class="tab-pill active" data-filter="ALL">All (<span id="count-all">0</span>)</button>
+              <button class="tab-pill" data-filter="UP">Up (<span id="count-up">0</span>)</button>
+              <button class="tab-pill" data-filter="DOWN">Down (<span id="count-down">0</span>)</button>
+              <button class="tab-pill" data-filter="PAUSED">Paused (<span id="count-paused">0</span>)</button>
+              <button class="tab-pill" data-filter="PENDING">Pending (<span id="count-pending">0</span>)</button>
+            </div>
+
+            <div class="sort-select-wrap">
+              <label for="sort-select" class="sr-only">Sort by</label>
+              <select id="sort-select" class="form-select">
+                <option value="created_at-desc">Newest First</option>
+                <option value="created_at-asc">Oldest First</option>
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="response_time-desc">Highest Latency</option>
+                <option value="response_time-asc">Lowest Latency</option>
+                <option value="status-asc">Status</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monitors Grid -->
+        <div class="monitors-grid" id="monitors-cards-container">
+          <!-- Dynamically populated monitor cards -->
+        </div>
+
+        <!-- Empty state placeholder -->
+        <div class="empty-state" id="monitors-empty-state" style="display:none;">
+          <div class="empty-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
+          <h3 class="empty-title">No Monitors Found</h3>
+          <p class="empty-desc">Get started by creating your first website monitor to track uptime and response latency.</p>
+          <button class="btn btn-primary" id="btn-empty-add-monitor">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Create Monitor</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- VIEW 3: INCIDENTS -->
+      <section class="view-panel" id="view-incidents">
+        <div class="incidents-layout">
+          <!-- Active Incidents Section -->
+          <div class="content-card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title text-rose">Active Incidents</h2>
+                <p class="card-subtitle">Endpoints currently experiencing outages or HTTP status failures</p>
+              </div>
+              <span class="badge badge-rose" id="active-incidents-badge">0 Active</span>
+            </div>
+            <div class="incidents-list" id="active-incidents-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Resolved Incidents Section -->
+          <div class="content-card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Resolved Incidents</h2>
+                <p class="card-subtitle">Past incident history with total downtime duration and root causes</p>
+              </div>
+              <span class="badge" id="resolved-incidents-badge">0 Resolved</span>
+            </div>
+            <div class="incidents-list" id="resolved-incidents-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 4: HISTORY & CHARTS -->
+      <section class="view-panel" id="view-history">
+        <!-- Analytics Toolbar -->
+        <div class="analytics-toolbar content-card">
+          <div class="toolbar-col">
+            <label for="analytics-monitor-select" class="form-label">Select Monitor</label>
+            <select id="analytics-monitor-select" class="form-select">
+              <option value="">Select a monitor to view performance...</option>
+            </select>
+          </div>
+
+          <div class="toolbar-col">
+            <label class="form-label">Time Window</label>
+            <div class="tab-pills" id="time-window-pills">
+              <button class="tab-pill" data-hours="1">1 Hour</button>
+              <button class="tab-pill" data-hours="6">6 Hours</button>
+              <button class="tab-pill active" data-hours="24">24 Hours</button>
+              <button class="tab-pill" data-hours="168">7 Days</button>
+              <button class="tab-pill" data-hours="720">30 Days</button>
+            </div>
+          </div>
+
+          <div class="toolbar-col toolbar-actions">
+            <label class="form-label">&nbsp;</label>
+            <button class="btn btn-secondary btn-sm" id="btn-export-csv" title="Export recorded checks as CSV">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Export CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Analytics Stats Row -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <span class="metric-label">Uptime Percentage</span>
+            <div class="metric-value text-emerald" id="analytics-uptime">--</div>
+            <div class="metric-footer">
+              <span class="subtext" id="analytics-checks-count">-- checks recorded</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <span class="metric-label">Average Response Time</span>
+            <div class="metric-value" id="analytics-avg-latency">-- <span class="unit">ms</span></div>
+            <div class="metric-footer">
+              <span class="subtext" id="analytics-min-max">Min: -- · Max: --</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <span class="metric-label">Successful Checks</span>
+            <div class="metric-value text-emerald" id="analytics-success-checks">0</div>
+            <div class="metric-footer">
+              <span class="subtext">Completed within expected HTTP status</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <span class="metric-label">Failed Checks</span>
+            <div class="metric-value text-rose" id="analytics-failed-checks">0</div>
+            <div class="metric-footer">
+              <span class="subtext">Timeouts or unexpected statuses</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Native SVG Response-Time Chart -->
+        <div class="content-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Response Time Latency (ms)</h2>
+              <p class="card-subtitle" id="chart-subtitle">Chronological timeline of measured network response latency</p>
+            </div>
+            <div class="chart-legend">
+              <span class="legend-item"><span class="legend-color success"></span> Operational</span>
+              <span class="legend-item"><span class="legend-color failure"></span> Failed</span>
+            </div>
+          </div>
+
+          <div class="chart-wrapper">
+            <div class="chart-container" id="svg-chart-container">
+              <!-- Native responsive SVG chart rendered here -->
+              <svg id="latency-svg-chart" viewBox="0 0 900 260" preserveAspectRatio="none">
+                <!-- Injected via app.js -->
+              </svg>
+            </div>
+            <div class="chart-tooltip" id="chart-tooltip" style="display:none;"></div>
+          </div>
+        </div>
+
+        <!-- Detailed Check History Table -->
+        <div class="content-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Recorded Check History</h2>
+              <p class="card-subtitle">Exact server-side HTTP check results and latency logs</p>
+            </div>
+            <div class="pagination-info" id="history-pagination-info">
+              Showing recent checks
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="table-check-history">
+              <thead>
+                <tr>
+                  <th>Timestamp (UTC)</th>
+                  <th>Status</th>
+                  <th>HTTP Code</th>
+                  <th>Latency</th>
+                  <th>Error Category</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody id="history-table-tbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 5: SETTINGS -->
+      <section class="view-panel" id="view-settings">
+        <div class="settings-grid">
+          <!-- Configuration Settings Card -->
+          <div class="content-card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Monitoring Configuration</h2>
+                <p class="card-subtitle">Defaults applied to new monitors and retention lifecycle</p>
+              </div>
+            </div>
+            <form id="settings-form" class="settings-form">
+              <div class="form-group">
+                <label for="setting-default-interval" class="form-label">Default Check Interval (seconds)</label>
+                <input type="number" id="setting-default-interval" class="form-input" min="10" max="86400" required>
+                <small class="form-hint">Safe default: 60s. Permitted range: 10s to 86,400s (24 hours).</small>
+              </div>
+
+              <div class="form-group">
+                <label for="setting-default-timeout" class="form-label">Default Request Timeout (seconds)</label>
+                <input type="number" id="setting-default-timeout" class="form-input" min="1" max="60" required>
+                <small class="form-hint">Connection and read timeout applied per outgoing request (1s to 60s).</small>
+              </div>
+
+              <div class="form-group">
+                <label for="setting-retention-days" class="form-label">Check History Retention (days)</label>
+                <input type="number" id="setting-retention-days" class="form-input" min="1" max="365" required>
+                <small class="form-hint">Historical check records older than this threshold are pruned automatically.</small>
+              </div>
+
+              <div class="form-group">
+                <label for="setting-theme" class="form-label">Default Theme</label>
+                <select id="setting-theme" class="form-select">
+                  <option value="dark">Dark Theme (Default)</option>
+                  <option value="light">Light Theme</option>
+                </select>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="btn-save-settings">
+                  <span>Save Settings</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Architecture & Health Status Card -->
+          <div class="content-card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Observability Engine Status</h2>
+                <p class="card-subtitle">Runtime parameters and security enforcement audit</p>
+              </div>
+            </div>
+
+            <div class="system-status-list">
+              <div class="status-row">
+                <span class="status-label">Application Status</span>
+                <span class="badge badge-emerald" id="sys-status-app">Operational</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Background Scheduler</span>
+                <span class="badge badge-emerald" id="sys-status-scheduler">Active (APScheduler)</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Total Configured Monitors</span>
+                <span class="mono-value" id="sys-total-monitors">0</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Active Incidents</span>
+                <span class="mono-value" id="sys-active-incidents">0</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Server Time (UTC)</span>
+                <span class="mono-value" id="sys-server-time">--</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">SSRF Protection</span>
+                <span class="badge badge-blue">Enforced (RFC1918 / Loopback / Cloud Metadata Blocked)</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">TLS / SSL Verification</span>
+                <span class="badge badge-blue">Strictly Enforced</span>
+              </div>
+            </div>
+
+            <div class="security-notice">
+              <strong>Architecture Note:</strong> Periodic checks and alert transitions run while the backend service and scheduler are active. Real HTTP client requests are executed with concurrency throttling and strict destination IP validation.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL: ADD / EDIT MONITOR -->
+  <div class="modal-backdrop" id="modal-monitor" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Add Website Monitor</h2>
+        <button class="modal-close-btn" id="modal-close-btn" aria-label="Close dialog">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <form id="form-monitor" class="modal-form">
+        <input type="hidden" id="monitor-form-id" value="">
+
+        <div class="modal-error-box" id="modal-error-box" style="display:none;"></div>
+
+        <div class="form-group">
+          <label for="monitor-name" class="form-label">Monitor Name <span class="required">*</span></label>
+          <input type="text" id="monitor-name" class="form-input" placeholder="e.g. Production API Gateway" maxlength="100" required>
+        </div>
+
+        <div class="form-group">
+          <label for="monitor-url" class="form-label">Target URL <span class="required">*</span></label>
+          <input type="url" id="monitor-url" class="form-input" placeholder="https://api.example.com/health" maxlength="2048" required>
+          <small class="form-hint">Must begin with https:// or http://. Private, loopback, and metadata IPs are rejected.</small>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="monitor-method" class="form-label">HTTP Method</label>
+            <select id="monitor-method" class="form-select">
+              <option value="GET">GET (Standard check)</option>
+              <option value="HEAD">HEAD (Headers only)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="monitor-interval" class="form-label">Check Interval</label>
+            <select id="monitor-interval" class="form-select">
+              <option value="30">Every 30 seconds</option>
+              <option value="60" selected>Every 60 seconds (Default)</option>
+              <option value="120">Every 2 minutes</option>
+              <option value="300">Every 5 minutes</option>
+              <option value="600">Every 10 minutes</option>
+              <option value="1800">Every 30 minutes</option>
+              <option value="3600">Every 1 hour</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="monitor-timeout" class="form-label">Timeout (seconds)</label>
+            <input type="number" id="monitor-timeout" class="form-input" value="10" min="1" max="60" required>
+            <small class="form-hint">1 to 60 seconds</small>
+          </div>
+
+          <div class="form-group">
+            <label for="monitor-expected-status" class="form-label">Expected Status Codes</label>
+            <input type="text" id="monitor-expected-status" class="form-input" value="200-299" placeholder="200-299 or 200,204" required>
+            <small class="form-hint">e.g. 200-299 or 200,201,204</small>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="modal-cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="modal-submit-btn">
+            <span>Save Monitor</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIRM DELETE -->
+  <div class="modal-backdrop" id="modal-delete" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+    <div class="modal-dialog modal-dialog-sm">
+      <div class="modal-header">
+        <h2 class="modal-title text-rose" id="delete-title">Delete Monitor</h2>
+        <button class="modal-close-btn" id="delete-close-btn" aria-label="Close dialog">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to permanently delete <strong id="delete-monitor-name">this monitor</strong>?</p>
+        <p class="modal-warning-text">All recorded check history and incident logs will be permanently deleted.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="delete-cancel-btn">Cancel</button>
+        <button type="button" class="btn btn-danger" id="delete-confirm-btn">Delete Permanently</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS CONTAINER -->
+  <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
